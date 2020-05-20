@@ -57,5 +57,8 @@ def tweet_create_view(request, *args, **kwags):
         if next_url is not None and is_safe_url(next_url, ALLOWED_HOSTS):
             return redirect(next_url)
         tweet_form = TweetForm()
+    if tweet_form.errors:
+        if request.is_ajax():
+            return JsonResponse(tweet_form.errors, status=400)
     context = {'form': tweet_form}
     return render(request, 'components/form.html', context)

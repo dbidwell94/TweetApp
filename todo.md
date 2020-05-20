@@ -1,6 +1,6 @@
 1. Tweets
     => Creating
-        => Text
+        =/> Text
         => Image
     => Deleting
     => Re-tweeting
