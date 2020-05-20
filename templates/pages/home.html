@@ -27,6 +27,12 @@
 </div>
 
 <script>
+
+    const tweetContainerElement = document.getElementById("tweets");
+    const tweetCreateFormEl = document.getElementById("tweet-create-form");
+
+    tweetCreateFormEl.addEventListener("submit", handleTweetFormDidSubmit);
+
     function handleTweetFormDidSubmit(event){
         event.preventDefault();
         const myForm = event.target;
@@ -35,18 +41,18 @@
         const method = myForm.getAttribute("method");
         const httpResponse = new XMLHttpRequest();
         httpResponse.open(method, url);
+        httpResponse.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest");
+        httpResponse.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         httpResponse.onload = function(){
-            console.log(httpResponse.response);
-            const tweetsEl = document.getElementById("tweets");
-            loadTweets(tweetsEl);
+            if(httpResponse.status === 201){
+                const newTweetJson = JSON.parse(httpResponse.response);
+                const newTweetElement = returnFormattedTweet(newTweetJson);
+                console.log(newTweetElement);
+                tweetContainerElement.innerHTML += newTweetElement;
+            }
         }
         httpResponse.send(myFormData);
     }
-
-    const tweetsEl = document.getElementById("tweets");
-    const tweetCreateFormEl = document.getElementById("tweet-create-form");
-
-    tweetCreateFormEl.addEventListener("submit", handleTweetFormDidSubmit);
 
     function handleOnLike(tweet_id, currentCount){
         console.log(tweet_id, currentCount);
@@ -82,11 +88,12 @@
                 const currentItem = returnFormattedTweet(listedItems[i]);
                 finalStr += currentItem;
                 }
-            tweetsElement.innerHTML = finalStr;
+            tweetContainerElement.innerHTML = finalStr;
         }
         httpResponse.send();
     }
+4
+    loadTweets(tweetContainerElement);
 
-    loadTweets(tweetsEl);
 </script>
 {% endblock content %}
