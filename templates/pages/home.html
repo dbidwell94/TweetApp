@@ -14,9 +14,7 @@
     const tweetsElement = document.getElementById("tweets");
 
     function returnFormattedTweet(tweet){
-        let formattedTweet = "<div class='jumbotron jumbotron-fluid'><h1 class='text-primary'>"
-        + tweet.id
-        + "</h1><p class='text-secondary'>"
+        let formattedTweet = "<div class='jumbotron jumbotron-fluid tweet'><p class='text-secondary' id='tweet-" + tweet.id + "'>"
         + tweet.content
         + "</p></div>";
         return formattedTweet;
