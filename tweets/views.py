@@ -4,9 +4,8 @@ from .models import Tweet
 
 
 def home_page(request, *args, **kwargs):
-    print(args)
-    print(kwargs)
-    return HttpResponse("<h1>Hello World</h1>")
+    context = {}
+    return render(request, "pages/home.html", context)
 
 
 def tweet_detail_view(request, tweet_id, *args, **kwargs):
