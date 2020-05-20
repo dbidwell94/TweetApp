@@ -4,4 +4,41 @@
 <h1>
     Welcome to TweetMe!
 </h1>
+<div id="tweets">
+    <p>
+        Loading...
+    </p>
+</div>
+
+<script>
+    const tweetsElement = document.getElementById("tweets");
+
+    function returnFormattedTweet(tweet){
+        let formattedTweet = "<div class='jumbotron jumbotron-fluid'><h1 class='text-primary'>"
+        + tweet.id
+        + "</h1><p class='text-secondary'>"
+        + tweet.content
+        + "</p></div>";
+        return formattedTweet;
+    }
+
+    const httpResponse = new XMLHttpRequest();
+    const method = 'GET';
+    const url = '/tweets';
+    const responseType = 'json';
+    httpResponse.responseType = responseType;
+    httpResponse.open(method, url);
+    httpResponse.onload = function(){
+        const serverResponse = httpResponse.response;
+        const listedItems = serverResponse.response;
+        let finalStr = "";
+        let i;
+        for(i = 0; i < listedItems.length; i++){
+            const currentItem = returnFormattedTweet(listedItems[i]);
+            finalStr += currentItem;
+        }
+        tweetsElement.innerHTML = finalStr;
+    }
+    httpResponse.send();
+</script>
 {% endblock content %}
