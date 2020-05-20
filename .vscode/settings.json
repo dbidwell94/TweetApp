@@ -1,0 +1,6 @@
+{
+    "python.linting.pylintEnabled": false,
+    "python.linting.pylamaEnabled": true,
+    "python.linting.enabled": true,
+    "python.pythonPath": "/home/dbidwell94/.local/share/virtualenvs/tweetme-rHGY2KZi/bin/python"
+}
