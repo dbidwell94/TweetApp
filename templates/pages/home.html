@@ -76,6 +76,10 @@
                     alert("An error has occured. Please try again later.");
                 }
             }
+            else if(httpResponse.status === 401){
+                alert("Error, you must be logged in to tweet!");
+                window.location.href = '/login';
+            }
             else if(httpResponse.status === 500){
                 alert("There was a server error, please try again or contact the website administrator");
             }

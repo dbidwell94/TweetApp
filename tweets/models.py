@@ -1,8 +1,12 @@
 from django.db import models
+from django.conf import settings
 from random import randint
+
+User = settings.AUTH_USER_MODEL
 
 
 class Tweet(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField(blank=True, null=True)
     image = models.FileField(upload_to='images/', blank=True, null=True)
 
@@ -15,3 +19,6 @@ class Tweet(models.Model):
             "content": self.content,
             "likes": randint(0, 999)
         }
+    
+    def __str__(self):
+        return self.content
