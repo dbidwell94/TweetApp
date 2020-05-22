@@ -87,7 +87,7 @@
         httpResponse.send(myFormData);
     }
 
-    function handleOnLike(tweet_id, currentCount, action){
+    function handleTweetAction(tweet_id, currentCount, action){
         console.log(tweet_id, currentCount);
         const url = "/api/tweets/action";
         const method = "POST";
@@ -108,13 +108,18 @@
         httpResponse.send(data);
     }
 
+    function returnReTweetButton(tweet){
+        return "<button class='btn btn-outline-success btn-sm', onClick=handleTweetAction(" + tweet.id + "," + tweet.likes + 
+        ",'retweet')>Re-tweet</button>"
+    }
+
     function returnUnLikeButton(tweet){
-        return "<button class='btn btn-outline-primary btn-sm', onClick=handleOnLike(" + tweet.id + "," + tweet.likes + 
+        return "<button class='btn btn-outline-warning btn-sm', onClick=handleTweetAction(" + tweet.id + "," + tweet.likes + 
         ",'unlike')>Un-like</button>"
     }
     
     function returnLikeButton(tweet){
-        return "<button class='btn btn-primary btn-sm', onClick=handleOnLike(" + tweet.id + "," + tweet.likes + 
+        return "<button class='btn btn-primary btn-sm', onClick=handleTweetAction(" + tweet.id + "," + tweet.likes + 
         ",'like')>"+tweet.likes+" Like</button>"
     }
 
@@ -124,6 +129,7 @@
         + "</p><div class='btn-group'>"
         +returnLikeButton(tweet)
         +returnUnLikeButton(tweet)
+        +returnReTweetButton(tweet)
         +"</div></div>";
         return formattedTweet;
     }

@@ -77,9 +77,10 @@ def tweet_action_view(request, *args, **kwargs):
             return JsonResponse(serializer.data, status=200)
         elif action == "unlike":
             obj.likes.remove(request.user)
+            serializer = TweetSerializer(obj)
+            return JsonResponse(serializer.data, status=200)
         elif action == "retweet":
-            # This is todo
-            pass
+            return JsonResponse({"message":"feature not yet implimented"}, status=501)
             
     return Response({}, status=200)
 
