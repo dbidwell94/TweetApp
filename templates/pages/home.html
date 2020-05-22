@@ -76,7 +76,7 @@
                     alert("An error has occured. Please try again later.");
                 }
             }
-            else if(httpResponse.status === 401){
+            else if(httpResponse.status === 401 || httpResponse.status === 403){
                 alert("Error, you must be logged in to tweet!");
                 window.location.href = '/login';
             }
@@ -87,13 +87,35 @@
         httpResponse.send(myFormData);
     }
 
-    function handleOnLike(tweet_id, currentCount){
+    function handleOnLike(tweet_id, currentCount, action){
         console.log(tweet_id, currentCount);
+        const url = "/api/tweets/action";
+        const method = "POST";
+        const data = JSON.stringify({
+            id: tweet_id,
+            action: action
+        })
+        const httpResponse = new XMLHttpRequest();
+        httpResponse.open(method, url);
+        httpResponse.setRequestHeader("Content-Type", "Application/json");
+        httpResponse.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest");
+        httpResponse.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        httpResponse.setRequestHeader("X-CSRFToken", csrftoken);
+        httpResponse.onload = function() {
+            loadTweets(tweetContainerElement);
+            console.log(httpResponse.status, httpResponse.response)
+        }
+        httpResponse.send(data);
     }
 
+    function returnUnLikeButton(tweet){
+        return "<button class='btn btn-outline-primary btn-sm', onClick=handleOnLike(" + tweet.id + "," + tweet.likes + 
+        ",'unlike')>Un-like</button>"
+    }
+    
     function returnLikeButton(tweet){
         return "<button class='btn btn-primary btn-sm', onClick=handleOnLike(" + tweet.id + "," + tweet.likes + 
-        ")>"+tweet.likes+" Like</button>"
+        ",'like')>"+tweet.likes+" Like</button>"
     }
 
     function returnFormattedTweet(tweet){
@@ -101,6 +123,7 @@
         + tweet.content
         + "</p><div class='btn-group'>"
         +returnLikeButton(tweet)
+        +returnUnLikeButton(tweet)
         +"</div></div>";
         return formattedTweet;
     }
@@ -114,18 +137,35 @@
         httpResponse.open(method, url);
         httpResponse.onload = function(){
             const serverResponse = httpResponse.response;
-            const listedItems = serverResponse.response;
             let finalStr = "";
             let i;
-            for(i = 0; i < listedItems.length; i++){
-                const currentItem = returnFormattedTweet(listedItems[i]);
+            for(i = 0; i < serverResponse.length; i++){
+                const currentItem = returnFormattedTweet(serverResponse[i]);
                 finalStr += currentItem;
                 }
             tweetContainerElement.innerHTML = finalStr;
         }
         httpResponse.send();
     }
-4
+
+    function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    
+    var csrftoken = getCookie('csrftoken');
+
     loadTweets(tweetContainerElement);
 
 </script>
