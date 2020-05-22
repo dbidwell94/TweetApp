@@ -8,7 +8,9 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated
 from .models import Tweet
 from .forms import TweetForm
-from .serializers import TweetSerializer, TweetActionSerializer
+from .serializers import (TweetSerializer,
+                          TweetActionSerializer,
+                          TweetCreateSerializer)
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
@@ -27,7 +29,7 @@ def tweet_list_view(request, *args, **kwargs):
 def tweet_create_view(request, *args, **kwags):
     """ REST API tweet creation """
     data = request.POST
-    serializer = TweetSerializer(data=data)
+    serializer = TweetCreateSerializer(data=data)
     if serializer.is_valid(raise_exception=True):
         serializer.save(user=request.user)
         return Response(serializer.data, status=201)
@@ -67,6 +69,7 @@ def tweet_action_view(request, *args, **kwargs):
         data = serializer.validated_data
         tweet_id = data.get("id")
         action = data.get("action")
+        content = data.get("content")
         qs = Tweet.objects.filter(id=tweet_id)
         if not qs.exists():
             return Response({}, status=404)
@@ -80,7 +83,12 @@ def tweet_action_view(request, *args, **kwargs):
             serializer = TweetSerializer(obj)
             return JsonResponse(serializer.data, status=200)
         elif action == "retweet":
-            return JsonResponse({"message":"feature not yet implimented"}, status=501)
+            new_tweet = Tweet.objects.create(
+                user=request.user,
+                parent=obj,
+                content=content)
+            serializer = TweetSerializer(new_tweet)
+            return JsonResponse(serializer.data, status=201)
             
     return Response({}, status=200)
 

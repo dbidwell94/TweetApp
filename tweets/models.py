@@ -17,16 +17,13 @@ class Tweet(models.Model):
     image = models.FileField(upload_to='images/', blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def is_retweet(self):
+        """ returns true if this tweet is a re-tweet """
+        return self.parent is not None
 
     class Meta:
         ordering = ['-id']
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "content": self.content,
-            "likes": randint(0, 999)
-        }
     
     def __str__(self):
         return self.content
